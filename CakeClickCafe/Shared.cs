@@ -10,6 +10,41 @@ namespace CakeClickCafe
 {
     public class Shared
     {
+        public static string NumberFormatter(float num)
+        {
+            int numLength = num.ToString().Length;
+            float newNum = 0;
+            if (numLength > 6)
+            {
+                string suffix = "";
+                if (numLength > 6 && numLength < 10)
+                {
+                    newNum = num / 1000000;
+                    suffix = " Million";
+                }
+                else if (numLength > 9 && numLength < 13)
+                {
+                    newNum = num / 1000000000;
+                    suffix = " Billion";
+                }
+                else if (numLength > 12 && numLength < 16)
+                {
+                    newNum = num / 1000000000000;
+                    suffix = " Trillion";
+                }
+                else if (numLength > 15 && numLength < 19)
+                {
+                    newNum = num / 1000000000000000;
+                    suffix = " Quadrillion";
+                }
+                return newNum.ToString("0.00") + suffix;
+            }
+            else
+            {
+                return num.ToString("#,0");
+            }
+        }
+
         public enum BuySellMode { buy, sell }
         public enum MenuPos { none, tLeft, tRight, bLeft, bRight, overlay}
 

@@ -34,7 +34,7 @@ namespace CakeClickCafe
 
         public ClickModifier(Game game, SpriteBatch sb, long baseCost, float costMultiplier, float clickMultiplier, Texture2D img, string name, Rectangle crop, Shared.MenuPos position) : base(game)
         {
-            amountOwned = 1; //temporarily set to 1 so they have visible icon
+            amountOwned = 0; //temporarily set to 1 so they have visible icon
             this.sb = sb;
             this.baseCost = baseCost;
             this.costMultiplier = costMultiplier;
@@ -52,8 +52,14 @@ namespace CakeClickCafe
                 defaultScale = 188f / crop.Height;
             }
             imgScale = defaultScale;
+            CalcValues();
+        }
+
+        public void CalcValues()
+        {
+            sellPrice = (int)((baseCost + costMultiplier * (float)Math.Pow(amountOwned - 1, 2)) * 0.75f);
+            currentPrice = baseCost + costMultiplier * (float)Math.Pow(amountOwned,2);
             currentModifier = amountOwned * clickMultiplier;
-            currentPrice = baseCost;
         }
 
         private void SetPosition()
@@ -109,8 +115,7 @@ namespace CakeClickCafe
             {
                 ClickerScene.wallet -= (long)currentPrice;
                 amountOwned++;
-                sellPrice = (baseCost + (float)Math.Pow(costMultiplier, amountOwned-1)) * 0.75f;
-                currentPrice = baseCost + (float)Math.Pow(costMultiplier, amountOwned);
+                CalcValues();
             }
         }
 
@@ -120,8 +125,7 @@ namespace CakeClickCafe
             {
                 ClickerScene.wallet += sellPrice;
                 amountOwned--;
-                sellPrice = (baseCost + (float)Math.Pow(costMultiplier, amountOwned-1)) * 0.75f;
-                currentPrice = baseCost + (float)Math.Pow(costMultiplier, amountOwned);
+                CalcValues();
             }
         }
 

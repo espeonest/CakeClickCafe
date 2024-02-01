@@ -12,8 +12,8 @@ namespace CakeClickCafe
 {
     public class Cake : DrawableGameComponent
     {
-        
-        private int clickDelay = 10;
+
+        private int clickDelay = 5;
         private int delayCounter = 0;
 
         private SpriteBatch sb;
@@ -26,7 +26,7 @@ namespace CakeClickCafe
 
         private MouseState ms;
         private MouseState prevState;
-        public Cake(Game game, SpriteBatch sb,  Rectangle crop, Vector2 destination, float scale) : base(game)
+        public Cake(Game game, SpriteBatch sb, Rectangle crop, Vector2 destination, float scale) : base(game)
         {
             this.sb = sb;
             this.img = Shared.img;
@@ -49,14 +49,14 @@ namespace CakeClickCafe
         public override void Update(GameTime gameTime)
         {
             ms = Mouse.GetState();
-            if(delayCounter >= clickDelay)
+            if (delayCounter >= clickDelay)
             {
-                if (ms.X >= ClickerScene.cornerX && ms.Y >= ClickerScene.cornerY && ms.X <= ClickerScene.cornerX + crop.Width*scaleInitial && ms.Y <= ClickerScene.cornerY + crop.Height*scaleInitial && ms.LeftButton == ButtonState.Pressed && prevState.LeftButton == ButtonState.Released)
+                if (ms.X >= ClickerScene.cornerX && ms.Y >= ClickerScene.cornerY && ms.X <= ClickerScene.cornerX + crop.Width * scaleInitial && ms.Y <= ClickerScene.cornerY + crop.Height * scaleInitial && ms.LeftButton == ButtonState.Pressed && prevState.LeftButton == ButtonState.Released)
                 {
                     scale = scaleGrow;
-                    destination.X = ClickerScene.cornerX - 20;
-                    destination.Y = ClickerScene.cornerY - 14;
-                    ClickerScene.wallet += (float)(1 * Math.Ceiling(ClickerScene.modifier)); // whole #s only!
+                    destination.X = ClickerScene.cornerX - (Shared.stage.X * 20 / 1200);
+                    destination.Y = ClickerScene.cornerY - (Shared.stage.Y * 14 / 1200);
+                    ClickerScene.wallet += (float)Math.Ceiling(ClickerScene.coinsPerClick); // whole #s only!
                     delayCounter = 0;
                 }
                 else

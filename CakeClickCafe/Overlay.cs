@@ -30,29 +30,26 @@ namespace CakeClickCafe
         private List<DrawableGameComponent> overlayComponents;
 
         // TODO:
-        //  - string layouts (confirm, cancel, item name, etc)
         //  - buy/sell modes
         //  - link to ClickModifier and all that, may need to move around some functionality, we will see
-        //  - position buttons, give functionality
-        public Overlay(Game game, SpriteBatch sb, ClickModifier menuItem) : base(game)
+        public Overlay(Game game, SpriteBatch sb) : base(game)
         {
             this.sb = sb;
-            this.menuItem = new ClickModifier(game, sb, menuItem.baseCost, menuItem.costMultiplier, menuItem.clickMultiplier, Shared.img, menuItem.Name, menuItem.Crop, Shared.MenuPos.overlay);
+            // a dummy menu item to act as the overlay image
+            // all actual menu item functionality will be passed through ClickerScene
+            menuItem = new ClickModifier(game, sb, 0, 0, 0, Shared.img, "", Shared.tea, Shared.MenuPos.overlay);
             regFont = game.Content.Load<SpriteFont>("fonts/regular");
             headFont = game.Content.Load<SpriteFont>("fonts/heading");
             overlayDest = new Vector2(Shared.stage.X / 2 - Shared.overlay.Width * overlayScale / 2, Shared.stage.Y / 2 - Shared.overlay.Height * overlayScale / 2);
             overlay = new DisplayImage(game, sb, Shared.uiImg, Shared.overlay, overlayDest, overlayScale, Shared.overlayLayer);
-
-            // need: current price, amount owned, modifier per, current total modifier
-            // not in that order
-            // I'll try a single string w line breaks?
+            #region string layouts
             Vector2 namePos = new Vector2(overlayDest.X + (Shared.stage.X * 74/1200), overlayDest.Y + (Shared.stage.Y * 28/1200));
             itemName = new StringBuilder(game, sb, headFont, this.menuItem.Name, namePos, Color.Black);
             Vector2 multPos = new Vector2(overlayDest.X + (Shared.stage.X * 460 / 1200), overlayDest.Y + (Shared.stage.Y * 210 / 1200));
             multiplierInfo = new StringBuilder(game, sb, regFont, "+" + this.menuItem.clickMultiplier.ToString() + " per\nitem owned.", multPos, Color.Black);
             Vector2 detailsPos = new Vector2(overlayDest.X + (Shared.stage.X * 74 / 1200), overlayDest.Y + (Shared.stage.Y * 500 / 1200));
             itemDetails = new StringBuilder(game, sb, regFont, "TEST\n\nTEST\n\nTEST", detailsPos, Color.Black);
-
+            #endregion
 
             confirmDest = new Rectangle((int)(overlayDest.X + Shared.overlay.Width*overlayScale - (Shared.confirmButton.Width * overlayScale + 60)), (int)(overlayDest.Y + Shared.overlay.Height*overlayScale - (Shared.confirmButton.Height * overlayScale * 2 + 80)), (int)(Shared.confirmButton.Width * overlayScale), (int)(Shared.confirmButton.Height * overlayScale));
             cancelDest = new Rectangle((int)(overlayDest.X + Shared.overlay.Width * overlayScale - (Shared.cancelButton.Width * overlayScale + 60)), (int)(overlayDest.Y + Shared.overlay.Height * overlayScale - (Shared.cancelButton.Height * overlayScale + 60)), (int)(Shared.cancelButton.Width * overlayScale), (int)(Shared.cancelButton.Height * overlayScale));
@@ -61,12 +58,12 @@ namespace CakeClickCafe
             overlayComponents = new List<DrawableGameComponent>
             {
                 overlay,
+                menuItem,
                 itemName,
                 multiplierInfo,
                 itemDetails,
                 confirmButton,
-                cancelButton,
-                this.menuItem
+                cancelButton
             };
             foreach (DrawableGameComponent component in overlayComponents)
             {
@@ -80,10 +77,10 @@ namespace CakeClickCafe
             string message = "";
             if(mode == Shared.BuySellMode.buy)
             {
-                message = $"Number owned: {count}\n\nTotal bonus: {multiplier}\n\nCost: {coins}";
+                message = $"Number owned: {count}\n\nTotal bonus: {Shared.NumberFormatter(multiplier)}\n\nCost: {Shared.NumberFormatter(coins)}";
             } else if(mode == Shared.BuySellMode.sell)
             {
-                message = $"Number owned: {count}\n\nTotal bonus: {multiplier}\n\nSell price: {coins}";
+                message = $"Number owned: {count}\n\nTotal bonus: {Shared.NumberFormatter(multiplier)}\n\nSell price: {Shared.NumberFormatter(coins)}";
             }
             return message;
         }
@@ -109,6 +106,7 @@ namespace CakeClickCafe
             this.Enabled = false;
             this.Visible = false;
         }
+        // note: when # owned goes from 0 to 1, img needs to be redrawn
 
         //public override void Draw(GameTime gameTime)
         //{

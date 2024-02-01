@@ -14,7 +14,7 @@ namespace CakeClickCafe
         private SpriteBatch sb;
         private Cake cake;
         // cake obj should probably receive mod and wallet
-        public static float modifier;
+        public static float coinsPerClick;
         public static float wallet;
         // notes for wallet:
         // numbers display 6 digits max, afterwards begin rounding
@@ -54,16 +54,19 @@ namespace CakeClickCafe
         public Rectangle[] sellDest;
         private List<MenuButton> buyButtons;
         private List<MenuButton> sellButtons;
+        private Shared.BuySellMode mode;
 
         public List<ClickModifier> modifiers;
+        public int modifierIndex;
         public int menuIndex;
 
         public ClickerScene(Game game, SpriteBatch sb) : base(game)
         {
             this.Show();
             this.sb = sb;
-            wallet = 0;
-            modifier = 1;
+            // should start at zero normally
+            wallet = 50;
+            coinsPerClick = 1;
             DisplayImage background = new DisplayImage(game, sb, game.Content.Load<Texture2D>("images/sky"), new Rectangle(0, 0, 256, 256), Vector2.Zero, 5, Shared.bgLayer);
             game.Components.Add(background);
 
@@ -95,26 +98,27 @@ namespace CakeClickCafe
             game.Components.Add(downNav);
 
             #region menu items declared
-            ClickModifier tea = new ClickModifier(game, sb, 50, 1.5f, 10, Shared.img, "Tea", Shared.tea, Shared.MenuPos.tLeft);
-            ClickModifier latte = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Latte", Shared.latte, Shared.MenuPos.tRight);
-            ClickModifier cinnamonRoll = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Cinnamon Roll", Shared.cinnamonRoll, Shared.MenuPos.bLeft);
-            ClickModifier matchaLatte = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Matcha Latte", Shared.matchaLatte, Shared.MenuPos.bRight);
-            ClickModifier croissant = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Croissant", Shared.croissant, Shared.MenuPos.none);
-            ClickModifier icedCoffee = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Iced Coffee", Shared.icedCoffee, Shared.MenuPos.none);
-            ClickModifier iceCream = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Ice Cream", Shared.iceCream, Shared.MenuPos.none);
-            ClickModifier rootBeerFloat = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Root Beer Float", Shared.rootBeerFloat, Shared.MenuPos.none);
-            ClickModifier cupcake = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Cupcake", Shared.cupcake, Shared.MenuPos.none);
-            ClickModifier chocStrawb = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Choc Strawbs", Shared.chocolateStrawberry, Shared.MenuPos.none);
-            ClickModifier jello = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Jello", Shared.jello, Shared.MenuPos.none);
-            ClickModifier flan = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Flan", Shared.flan, Shared.MenuPos.none);
-            ClickModifier macaron = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Macaron", Shared.macaron, Shared.MenuPos.none);
-            ClickModifier fruitTart = new ClickModifier(game, sb, 50, 75, 10, Shared.img, "Fruit Tart", Shared.fruitTart, Shared.MenuPos.none);
+            ClickModifier tea = new ClickModifier(game, sb, 50, 150, 10, Shared.img, "Tea", Shared.tea, Shared.MenuPos.tLeft);
+            ClickModifier latte = new ClickModifier(game, sb, 2000, 4500, 50, Shared.img, "Latte", Shared.latte, Shared.MenuPos.tRight);
+            ClickModifier cinnamonRoll = new ClickModifier(game, sb, 30000, 55000, 250, Shared.img, "Cinnamon Roll", Shared.cinnamonRoll, Shared.MenuPos.bLeft);
+            ClickModifier matchaLatte = new ClickModifier(game, sb, 150000, 675000, 800, Shared.img, "Matcha Latte", Shared.matchaLatte, Shared.MenuPos.bRight);
+            ClickModifier croissant = new ClickModifier(game, sb, 870000, 2000000, 1250, Shared.img, "Croissant", Shared.croissant, Shared.MenuPos.none);
+            ClickModifier icedCoffee = new ClickModifier(game, sb, 1500000, 7000000, 2400, Shared.img, "Iced Coffee", Shared.icedCoffee, Shared.MenuPos.none);
+            ClickModifier iceCream = new ClickModifier(game, sb, 450000000, 2750000000, 25000, Shared.img, "Ice Cream", Shared.iceCream, Shared.MenuPos.none);
+            ClickModifier rootBeerFloat = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Root Beer Float", Shared.rootBeerFloat, Shared.MenuPos.none);
+            ClickModifier cupcake = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Cupcake", Shared.cupcake, Shared.MenuPos.none);
+            ClickModifier chocStrawb = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Choc Strawbs", Shared.chocolateStrawberry, Shared.MenuPos.none);
+            ClickModifier jello = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Jello", Shared.jello, Shared.MenuPos.none);
+            ClickModifier flan = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Flan", Shared.flan, Shared.MenuPos.none);
+            ClickModifier macaron = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Macaron", Shared.macaron, Shared.MenuPos.none);
+            ClickModifier fruitTart = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Fruit Tart", Shared.fruitTart, Shared.MenuPos.none);
             ClickModifier[] modifierArray = { tea, latte, cinnamonRoll, matchaLatte, croissant, icedCoffee, iceCream, rootBeerFloat, cupcake, chocStrawb, jello, flan, macaron, fruitTart };
             #endregion
             modifiers = new List<ClickModifier>();
             modifiers.AddRange(modifierArray);
             foreach (ClickModifier cm in modifiers)
             {
+                coinsPerClick += cm.currentModifier;
                 game.Components.Add(cm);
             }
             menuIndex = 0;
@@ -135,8 +139,7 @@ namespace CakeClickCafe
             }
 
             #region overlay stuff
-            // declared with tea just as a default
-            overlay = new Overlay(game, sb, tea);
+            overlay = new Overlay(game, sb);
             // hide it!
             overlay.Hide();
             #endregion
@@ -182,13 +185,27 @@ namespace CakeClickCafe
                 }
                 if (overlay.confirmButton.Clicked)
                 {
-                    if (overlay.menuItem.IsBuyable())
+                    // for buy mode only
+                    if (modifiers[modifierIndex].IsBuyable() && mode==Shared.BuySellMode.buy)
                     {
-                        overlay.menuItem.Buy();
+                        modifiers[modifierIndex].Buy();
+                        overlay.menuItem.clickMultiplier = modifiers[modifierIndex].clickMultiplier;
+                        overlay.itemDetails.Message = overlay.DetailText(modifiers[modifierIndex].amountOwned, modifiers[modifierIndex].currentPrice, modifiers[modifierIndex].currentModifier, Shared.BuySellMode.buy);
+                        coinsPerClick += modifiers[modifierIndex].clickMultiplier;
+                        //show message
+                    }
+                    else if (modifiers[modifierIndex].amountOwned > 0 && mode == Shared.BuySellMode.sell)
+                    {
+                        modifiers[modifierIndex].Sell();
+                        overlay.menuItem.clickMultiplier = modifiers[modifierIndex].clickMultiplier;
+                        overlay.itemDetails.Message = overlay.DetailText(modifiers[modifierIndex].amountOwned, modifiers[modifierIndex].sellPrice, modifiers[modifierIndex].currentModifier, Shared.BuySellMode.sell);
+                        coinsPerClick -= modifiers[modifierIndex].clickMultiplier;
+                        //show message
                     }
                     else
                     {
-
+                        Debug.WriteLine("invalid attempt");
+                        //error message
                     }
                     overlay.confirmButton.Clicked = false;
                 }
@@ -235,12 +252,10 @@ namespace CakeClickCafe
                 modifiers[menuIndex * 2 + 3].Position = Shared.MenuPos.bRight;
             }
         }
-
-        // OKAAAAY change it so the overlay doesn't initialize the menu item UNTIL it is shown
-        // at which point you add to components yada yada
-        // then REMOVE in the hide() func
+                
         public void OverlayActivator(ClickModifier cm, Shared.BuySellMode mode)
         {
+            this.mode = mode;
             float coins = 0;
             if(mode == Shared.BuySellMode.buy)
             {
@@ -250,18 +265,17 @@ namespace CakeClickCafe
             {
                 coins = cm.sellPrice;
             }
+            modifierIndex = modifiers.IndexOf(cm);
             overlay.menuItem.Crop = cm.Crop;
             overlay.menuItem.Name = cm.Name;
             overlay.itemName.Message = cm.Name;
             overlay.menuItem.clickMultiplier = cm.clickMultiplier;
             overlay.itemDetails.Message = overlay.DetailText(cm.amountOwned, coins, cm.currentModifier, mode);
+            overlay.multiplierInfo.Message = "+" + Shared.NumberFormatter(cm.clickMultiplier) + " per\nitem owned.";
             overlay.Show();
         }
 
-        // for buy and sell:
-        // two options. First is the overlay closes upon a successful purchase
-        // second is that the overlay has to ensure it's refreshing the text properly
-        // and also shows some kind of confirmation message after a successful purchase.
+        
 
         public void BuyClick(int index)
         {

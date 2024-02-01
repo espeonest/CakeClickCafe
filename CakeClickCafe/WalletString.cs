@@ -35,7 +35,7 @@ namespace CakeClickCafe
 
         public override void Update(GameTime gameTime)
         {
-            message = "Coins: " + ClickerScene.wallet;
+            message = "Coins: " + Shared.NumberFormatter(ClickerScene.wallet) + "\nPer Click: " + Shared.NumberFormatter(ClickerScene.coinsPerClick);
             // center aligns
             // pos.X = GameStuff.stage.X / 2 - font.MeasureString(message).X / 2;
             base.Update(gameTime);
