@@ -7,7 +7,8 @@ Sell (click on) your cake for coins, then use your coins to purchase upgrades th
 
 Future Features:
 - Cake customization! Different appearances/flavours for the cake.
-- More menu items!!
+- More menu items!!!
+- Upon purchasing enough of an item, it visually "upgrades"
 - Sound effects
 - Change the background
 - Save files
