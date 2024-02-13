@@ -26,7 +26,7 @@ namespace CakeClickCafe
         {
             this.sb = sb;
             this.destination = destination;
-            img = Shared.img;
+            img = Shared.foodImg;
         }
 
         public override void Draw(GameTime gameTime)

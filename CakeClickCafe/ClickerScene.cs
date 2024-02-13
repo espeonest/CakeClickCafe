@@ -30,7 +30,7 @@ namespace CakeClickCafe
         public static float cornerX;
         public static float cornerY;
 
-        private Rectangle cakeSource = new Rectangle(5, 5, 65, 42);
+        private Rectangle cakeSource = new Rectangle(1, 0, 65, 42);
         private Vector2 cakeDest;
         private float cakeScale = 6.8f;
 
@@ -39,6 +39,7 @@ namespace CakeClickCafe
 
         private Rectangle menuSource = new Rectangle(4, 126, 248, 128);
         private float menuScale = Shared.stage.X / (1200 / 4.7f);
+        public float menuUiScale = Shared.stage.X / (1200 / 9.4f);
         private Vector2 menuDest;
 
         private Vector2 gridDest;
@@ -49,7 +50,7 @@ namespace CakeClickCafe
         MenuButton downNav;
 
 
-        public float buysellScale = Shared.stage.X / (1000 / 3);
+        public float buysellScale = Shared.stage.X / (1000 / 6);
         public Rectangle[] buyDest;
         public Rectangle[] sellDest;
         private List<MenuButton> buyButtons;
@@ -59,13 +60,14 @@ namespace CakeClickCafe
         public List<ClickModifier> modifiers;
         public int modifierIndex;
         public int menuIndex;
+        public Alert alert;
 
         public ClickerScene(Game game, SpriteBatch sb) : base(game)
         {
             this.Show();
             this.sb = sb;
             // should start at zero normally
-            wallet = 50;
+            wallet = 0;
             coinsPerClick = 1;
             DisplayImage background = new DisplayImage(game, sb, game.Content.Load<Texture2D>("images/sky"), new Rectangle(0, 0, 256, 256), Vector2.Zero, 5, Shared.bgLayer);
             game.Components.Add(background);
@@ -86,33 +88,34 @@ namespace CakeClickCafe
 
             menuDest = new Vector2(Shared.stage.X / 2 - (menuScale * menuSource.Width) / 2, Shared.stage.Y - (menuScale * menuSource.Height + (Shared.stage.Y * 10 / 1200)));
             gridDest = new Vector2(menuDest.X + (Shared.stage.X / 120) * menuScale, menuDest.Y + (Shared.stage.Y / (1200 / 22)) * menuScale);
-            DisplayImage menu = new DisplayImage(game, sb, Shared.menuImg, menuSource, menuDest, menuScale, Shared.menuLayer);
-            DisplayImage menuGrid = new DisplayImage(game, sb, Shared.uiImg, Shared.menuGridRect, gridDest, menuScale, Shared.menuComponentsLayer);
+            DisplayImage menu = new DisplayImage(game, sb, Shared.miscImg, menuSource, menuDest, menuScale, Shared.menuLayer);
+            DisplayImage menuGrid = new DisplayImage(game, sb, Shared.uiImg, Shared.menuGridRect, gridDest, menuUiScale, Shared.menuComponentsLayer);
             game.Components.Add(menu);
             game.Components.Add(menuGrid);
-            upButtonDest = new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuScale), (int)(gridDest.Y), (int)(Shared.upButton.Width * menuScale), (int)(Shared.upButton.Height * menuScale));
-            downButtonDest = new Rectangle(upButtonDest.X, upButtonDest.Y + upButtonDest.Height, (int)(Shared.downButton.Width * menuScale), (int)(Shared.downButton.Height * menuScale));
+            upButtonDest = new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuUiScale), (int)(gridDest.Y), (int)(Shared.upButton.Width * menuUiScale), (int)(Shared.upButton.Height * menuUiScale));
+            downButtonDest = new Rectangle(upButtonDest.X, upButtonDest.Y + upButtonDest.Height, (int)(Shared.downButton.Width * menuUiScale), (int)(Shared.downButton.Height * menuUiScale));
             upNav = new MenuButton(game, sb, Shared.uiImg, Shared.upButton, upButtonDest, Shared.menuComponentsLayer);
             downNav = new MenuButton(game, sb, Shared.uiImg, Shared.downButton, downButtonDest, Shared.menuComponentsLayer);
             game.Components.Add(upNav);
             game.Components.Add(downNav);
 
             #region menu items declared
-            ClickModifier tea = new ClickModifier(game, sb, 50, 150, 10, Shared.img, "Tea", Shared.tea, Shared.MenuPos.tLeft);
-            ClickModifier latte = new ClickModifier(game, sb, 2000, 4500, 50, Shared.img, "Latte", Shared.latte, Shared.MenuPos.tRight);
-            ClickModifier cinnamonRoll = new ClickModifier(game, sb, 30000, 55000, 250, Shared.img, "Cinnamon Roll", Shared.cinnamonRoll, Shared.MenuPos.bLeft);
-            ClickModifier matchaLatte = new ClickModifier(game, sb, 150000, 675000, 800, Shared.img, "Matcha Latte", Shared.matchaLatte, Shared.MenuPos.bRight);
-            ClickModifier croissant = new ClickModifier(game, sb, 870000, 2000000, 1250, Shared.img, "Croissant", Shared.croissant, Shared.MenuPos.none);
-            ClickModifier icedCoffee = new ClickModifier(game, sb, 1500000, 7000000, 2400, Shared.img, "Iced Coffee", Shared.icedCoffee, Shared.MenuPos.none);
-            ClickModifier iceCream = new ClickModifier(game, sb, 450000000, 2750000000, 25000, Shared.img, "Ice Cream", Shared.iceCream, Shared.MenuPos.none);
-            ClickModifier rootBeerFloat = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Root Beer Float", Shared.rootBeerFloat, Shared.MenuPos.none);
-            ClickModifier cupcake = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Cupcake", Shared.cupcake, Shared.MenuPos.none);
-            ClickModifier chocStrawb = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Choc Strawbs", Shared.chocolateStrawberry, Shared.MenuPos.none);
-            ClickModifier jello = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Jello", Shared.jello, Shared.MenuPos.none);
-            ClickModifier flan = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Flan", Shared.flan, Shared.MenuPos.none);
-            ClickModifier macaron = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Macaron", Shared.macaron, Shared.MenuPos.none);
-            ClickModifier fruitTart = new ClickModifier(game, sb, 50, 75, 0, Shared.img, "Fruit Tart", Shared.fruitTart, Shared.MenuPos.none);
-            ClickModifier[] modifierArray = { tea, latte, cinnamonRoll, matchaLatte, croissant, icedCoffee, iceCream, rootBeerFloat, cupcake, chocStrawb, jello, flan, macaron, fruitTart };
+            ClickModifier tea = new ClickModifier(game, sb, 50, 150, 10, Shared.foodImg, "Tea", Shared.tea, Shared.MenuPos.tLeft);
+            ClickModifier latte = new ClickModifier(game, sb, 2000, 4500, 50, Shared.foodImg, "Latte", Shared.latte, Shared.MenuPos.tRight);
+            ClickModifier cinnamonRoll = new ClickModifier(game, sb, 30000, 55000, 250, Shared.foodImg, "Cinnamon Roll", Shared.cinnamonRoll, Shared.MenuPos.bLeft);
+            ClickModifier matchaLatte = new ClickModifier(game, sb, 150000, 675000, 800, Shared.foodImg, "Matcha Latte", Shared.matchaLatte, Shared.MenuPos.bRight);
+            ClickModifier croissant = new ClickModifier(game, sb, 870000, 2000000, 1250, Shared.foodImg, "Croissant", Shared.croissant, Shared.MenuPos.none);
+            ClickModifier icedCoffee = new ClickModifier(game, sb, 1500000, 7000000, 2400, Shared.foodImg, "Iced Coffee", Shared.icedCoffee, Shared.MenuPos.none);
+            ClickModifier iceCream = new ClickModifier(game, sb, 450000000, 2750000000, 25000, Shared.foodImg, "Ice Cream", Shared.iceCream, Shared.MenuPos.none);
+            ClickModifier rootBeerFloat = new ClickModifier(game, sb, 50, 75, 0, Shared.foodImg, "Root Beer Float", Shared.rootBeerFloat, Shared.MenuPos.none);
+            ClickModifier cupcake = new ClickModifier(game, sb, 50, 75, 0, Shared.foodImg, "Cupcake", Shared.cupcake, Shared.MenuPos.none);
+            ClickModifier chocStrawb = new ClickModifier(game, sb, 50, 75, 0, Shared.foodImg, "Choc Strawbs", Shared.chocolateStrawberry, Shared.MenuPos.none);
+            ClickModifier jello = new ClickModifier(game, sb, 50, 75, 0, Shared.foodImg, "Jello", Shared.jello, Shared.MenuPos.none);
+            ClickModifier flan = new ClickModifier(game, sb, 50, 75, 0, Shared.foodImg, "Flan", Shared.flan, Shared.MenuPos.none);
+            ClickModifier macaron = new ClickModifier(game, sb, 50, 75, 0, Shared.foodImg, "Macaron", Shared.macaron, Shared.MenuPos.none);
+            ClickModifier fruitTart = new ClickModifier(game, sb, 50, 75, 0, Shared.foodImg, "Fruit Tart", Shared.fruitTart, Shared.MenuPos.none);
+            ClickModifier brownie = new ClickModifier(game, sb, 50, 75, 0, Shared.foodImg, "Brownie", Shared.fruitTart, Shared.MenuPos.none);
+            ClickModifier[] modifierArray = { tea, latte, cinnamonRoll, matchaLatte, croissant, icedCoffee, iceCream, rootBeerFloat, cupcake, chocStrawb, jello, flan, macaron, fruitTart, brownie };
             #endregion
             modifiers = new List<ClickModifier>();
             modifiers.AddRange(modifierArray);
@@ -123,8 +126,8 @@ namespace CakeClickCafe
             }
             menuIndex = 0;
             #region evil
-            buyDest = new Rectangle[] { new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuScale - (Shared.stage.X * 670 / 1200)), (int)(gridDest.Y + (Shared.stage.Y * 25 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuScale - (Shared.stage.X * 210 / 1200)), (int)(gridDest.Y + 25), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuScale - (Shared.stage.X * 670 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale * 2 + (Shared.stage.Y * 68 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuScale - (Shared.stage.X * 210 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale * 2 + (Shared.stage.Y * 68 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)) };
-            sellDest = new Rectangle[] { new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuScale - (Shared.stage.X * 670 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale + (Shared.stage.Y * 40 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuScale - (Shared.stage.X * 210 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale + (Shared.stage.Y * 40 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuScale - (Shared.stage.X * 670 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale * 3 + (Shared.stage.Y * 83 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuScale - (Shared.stage.X * 210 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale * 3 + (Shared.stage.Y * 83 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)) };
+            buyDest = new Rectangle[] { new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuUiScale - (Shared.stage.X * 670 / 1200)), (int)(gridDest.Y + (Shared.stage.Y * 25 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuUiScale - (Shared.stage.X * 210 / 1200)), (int)(gridDest.Y + 25), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuUiScale - (Shared.stage.X * 670 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale * 2 + (Shared.stage.Y * 68 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuUiScale - (Shared.stage.X * 210 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale * 2 + (Shared.stage.Y * 68 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)) };
+            sellDest = new Rectangle[] { new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuUiScale - (Shared.stage.X * 670 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale + (Shared.stage.Y * 40 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuUiScale - (Shared.stage.X * 210 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale + (Shared.stage.Y * 40 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuUiScale - (Shared.stage.X * 670 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale * 3 + (Shared.stage.Y * 83 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)), new Rectangle((int)(gridDest.X + Shared.menuGridRect.Width * menuUiScale - (Shared.stage.X * 210 / 1200)), (int)(gridDest.Y + Shared.buyButton.Height * buysellScale * 3 + (Shared.stage.Y * 83 / 1200)), (int)(Shared.buyButton.Width * buysellScale), (int)(Shared.buyButton.Height * buysellScale)) };
             #endregion
             buyButtons = new List<MenuButton>();
             sellButtons = new List<MenuButton>();
@@ -143,6 +146,8 @@ namespace CakeClickCafe
             // hide it!
             overlay.Hide();
             #endregion
+            alert = new Alert(game, sb, menuUiScale);
+            game.Components.Add(alert);
         }
 
 
@@ -174,10 +179,17 @@ namespace CakeClickCafe
 
             // vice versa for sold
 
-            // actual buy/sell function can be called from clickmod i think?
 
             if (overlay.Enabled)
             {
+                if (modifiers[modifierIndex].amountOwned == 0)
+                {
+                    overlay.menuItem.amountOwned = 0;
+                }
+                else
+                {
+                    overlay.menuItem.amountOwned = 1;
+                }
                 if (overlay.cancelButton.Clicked)
                 {
                     overlay.Hide();
@@ -192,27 +204,39 @@ namespace CakeClickCafe
                         overlay.menuItem.clickMultiplier = modifiers[modifierIndex].clickMultiplier;
                         overlay.itemDetails.Message = overlay.DetailText(modifiers[modifierIndex].amountOwned, modifiers[modifierIndex].currentPrice, modifiers[modifierIndex].currentModifier, Shared.BuySellMode.buy);
                         coinsPerClick += modifiers[modifierIndex].clickMultiplier;
-                        //show message
+                        alert.Display("Bought " + modifiers[modifierIndex].Name, Color.Green);
                     }
                     else if (modifiers[modifierIndex].amountOwned > 0 && mode == Shared.BuySellMode.sell)
                     {
                         modifiers[modifierIndex].Sell();
+                        if (modifiers[modifierIndex].amountOwned == 0)
+                        {
+                            overlay.menuItem.amountOwned = 0;
+                        }
                         overlay.menuItem.clickMultiplier = modifiers[modifierIndex].clickMultiplier;
                         overlay.itemDetails.Message = overlay.DetailText(modifiers[modifierIndex].amountOwned, modifiers[modifierIndex].sellPrice, modifiers[modifierIndex].currentModifier, Shared.BuySellMode.sell);
                         coinsPerClick -= modifiers[modifierIndex].clickMultiplier;
-                        //show message
+                        alert.Display("Sold " + modifiers[modifierIndex].Name, Color.Green);
                     }
                     else
                     {
                         Debug.WriteLine("invalid attempt");
-                        //error message
+                        if (mode == Shared.BuySellMode.buy)
+                        {
+                            alert.Display(modifiers[modifierIndex].Name + " is\ntoo expensive.", Color.Red);
+                        }
+                        else if (mode == Shared.BuySellMode.sell)
+                        {
+                            alert.Display("No " + modifiers[modifierIndex].Name + "\nto sell.", Color.Red);
+                        }
                     }
                     overlay.confirmButton.Clicked = false;
                 }
             }
             #endregion
 
-            int maxIndex = modifiers.Count / 2 - 2;
+            //int maxIndex = modifiers.Count / 2 - 2;
+            int maxIndex = 13;
             if (menuIndex == 0)
             {
                 // todo: make button greyed out if cannot go up or down anymore

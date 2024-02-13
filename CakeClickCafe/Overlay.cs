@@ -12,7 +12,7 @@ namespace CakeClickCafe
     public class Overlay : DrawableGameComponent
     {
         public SpriteBatch sb;
-        public float overlayScale = Shared.stage.X * 6/1200;
+        public float overlayScale = Shared.stage.X * 12/1200;
         public Vector2 overlayDest;
         public Rectangle confirmDest;
         public Rectangle cancelDest;
@@ -29,15 +29,12 @@ namespace CakeClickCafe
         private SpriteFont headFont;
         private List<DrawableGameComponent> overlayComponents;
 
-        // TODO:
-        //  - buy/sell modes
-        //  - link to ClickModifier and all that, may need to move around some functionality, we will see
         public Overlay(Game game, SpriteBatch sb) : base(game)
         {
             this.sb = sb;
             // a dummy menu item to act as the overlay image
             // all actual menu item functionality will be passed through ClickerScene
-            menuItem = new ClickModifier(game, sb, 0, 0, 0, Shared.img, "", Shared.tea, Shared.MenuPos.overlay);
+            menuItem = new ClickModifier(game, sb, 0, 0, 0, Shared.foodImg, "", Shared.tea, Shared.MenuPos.overlay);
             regFont = game.Content.Load<SpriteFont>("fonts/regular");
             headFont = game.Content.Load<SpriteFont>("fonts/heading");
             overlayDest = new Vector2(Shared.stage.X / 2 - Shared.overlay.Width * overlayScale / 2, Shared.stage.Y / 2 - Shared.overlay.Height * overlayScale / 2);

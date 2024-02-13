@@ -34,7 +34,7 @@ namespace CakeClickCafe
 
         public ClickModifier(Game game, SpriteBatch sb, long baseCost, float costMultiplier, float clickMultiplier, Texture2D img, string name, Rectangle crop, Shared.MenuPos position) : base(game)
         {
-            amountOwned = 0; //temporarily set to 1 so they have visible icon
+            amountOwned = 0;
             this.sb = sb;
             this.baseCost = baseCost;
             this.costMultiplier = costMultiplier;
@@ -57,8 +57,15 @@ namespace CakeClickCafe
 
         public void CalcValues()
         {
-            sellPrice = (int)((baseCost + costMultiplier * (float)Math.Pow(amountOwned - 1, 2)) * 0.75f);
-            currentPrice = baseCost + costMultiplier * (float)Math.Pow(amountOwned,2);
+            if (amountOwned == 0)
+            {
+                sellPrice = 0;
+            }
+            else
+            {
+                sellPrice = (int)((baseCost + costMultiplier * (float)Math.Pow(amountOwned - 1, 2)) * 0.75f);
+            }
+            currentPrice = baseCost + costMultiplier * (float)Math.Pow(amountOwned, 2);
             currentModifier = amountOwned * clickMultiplier;
         }
 
@@ -87,8 +94,7 @@ namespace CakeClickCafe
                     layer = Shared.menuComponentsLayer;
                     break;
                 case Shared.MenuPos.overlay:
-                    // note: change to a calculation based on size of square. Getting inconsistent results
-                    imgScale = defaultScale * 1.3f;
+                    imgScale = crop.Width * (350f / 1200f * Shared.stage.X) / crop.Height > (350f / 1200f * Shared.stage.X) ? (350f / 1200f * Shared.stage.X) / crop.Width : (350f / 1200f * Shared.stage.X) / crop.Height;
                     destination = new Rectangle((int)(422 - crop.Width * imgScale / 2), (int)(470 - crop.Height * imgScale / 2), (int)(crop.Width * imgScale), (int)(crop.Height * imgScale));
                     layer = Shared.overlayComponentsLayer;
                     break;

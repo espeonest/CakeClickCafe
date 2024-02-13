@@ -31,9 +31,10 @@ namespace CakeClickCafe
             // so ignore for now
             //Window.AllowUserResizing = true;
             Shared.stage = new Vector2((int)_graphics.PreferredBackBufferWidth, (int)_graphics.PreferredBackBufferHeight);
-            Shared.img = this.Content.Load<Texture2D>("images/spritesheet");
-            Shared.menuImg = this.Content.Load<Texture2D>("images/menuItems");
-            Shared.uiImg = this.Content.Load<Texture2D>("images/ui");
+            Shared.foodImg = this.Content.Load<Texture2D>("images/menuItems");
+            Shared.cakesImg = this.Content.Load<Texture2D>("images/cakeSheet");
+            Shared.miscImg = this.Content.Load<Texture2D>("images/logo-menu");
+            Shared.uiImg = this.Content.Load<Texture2D>("images/menu-ui");
             base.Initialize();
         }
 

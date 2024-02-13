@@ -1,0 +1,24 @@
+TODO:
+- create cake customization stuff
+- give alert a proper bg and have text centered in it
+- add larger number suffixes
+- finish giving menu item prices and all that, balance current prices better
+- add a menu with options
+- save files
+- better background image
+- sound effects and music!!!
+
+LOW PRIORITY:
+- more items, more images
+- name the cafe, change the background, customize cake
+- game stats (times clicked, total coins earned, etc)
+- auto click?
+
+Potential save file setup:
+square brackets indicate placeholder and are not literal
+
+[wallet]
+[# of tea]/[# of latte]/[# of cinroll]/etc
+[total clicks]/[# items bought total]/[# items sold total]/other stats
+
+using the forward slash as a delimiter obviously

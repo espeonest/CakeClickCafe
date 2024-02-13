@@ -29,7 +29,7 @@ namespace CakeClickCafe
         public Cake(Game game, SpriteBatch sb, Rectangle crop, Vector2 destination, float scale) : base(game)
         {
             this.sb = sb;
-            this.img = Shared.img;
+            this.img = Shared.cakesImg;
             this.crop = crop;
             this.destination = destination;
             this.scale = scale;
