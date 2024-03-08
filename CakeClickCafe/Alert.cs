@@ -44,7 +44,7 @@ namespace CakeClickCafe
             counter = 0;
             this.message = message;
             this.colour = colour;
-            if (regularFont.MeasureString(message).X > (49*scale))
+            if (regularFont.MeasureString(message).X > (47 * scale))
             {
                 font = smallFont;
             }
@@ -52,8 +52,14 @@ namespace CakeClickCafe
             {
                 font = regularFont;
             }
+            if(smallFont.MeasureString(message).X > (47 * scale))
+            {
+                this.message = message.Insert(message.IndexOf(" ") + 1, "\n");
+            }
+            // below is the rect that text should fit inside of
+            Rectangle temp = new Rectangle((int)(topCorner.X + (Shared.stage.X * 28 / 1200)), (int)(topCorner.Y + (Shared.stage.Y * 22 / 1200)), (int)(47 * scale), (int)(15 * scale));
             // may need to change into calculation if alerts end up more complicated than 1-2 lines
-            dest = new Vector2(topCorner.X + (Shared.stage.X * 28 / 1200), topCorner.Y + (Shared.stage.Y * 42 / 1200));
+            dest = new Vector2(topCorner.X + (Shared.stage.X * 28 / 1200), (Shared.stage.Y * 22 / 1200) + (15 * scale / 2) - (font.MeasureString(this.message).Y / 2));
         }
 
         public override void Update(GameTime gameTime)

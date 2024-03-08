@@ -67,7 +67,7 @@ namespace CakeClickCafe
             this.Show();
             this.sb = sb;
             // should start at zero normally
-            wallet = 0;
+            wallet = 250000000;
             coinsPerClick = 1;
             DisplayImage background = new DisplayImage(game, sb, game.Content.Load<Texture2D>("images/sky"), new Rectangle(0, 0, 256, 256), Vector2.Zero, 5, Shared.bgLayer);
             game.Components.Add(background);
@@ -264,6 +264,8 @@ namespace CakeClickCafe
 
         public void DownClick()
         {
+            // need to have an if-else for when there aren't an even number of items to display
+            // so that the other slots on the menu aren't occupied and the buttons aren't visible
             int maxIndex = modifiers.Count / 2 - 2;
             if (menuIndex != maxIndex)
             {
